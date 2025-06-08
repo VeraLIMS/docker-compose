@@ -16,7 +16,7 @@ services:
     expose:
       - 9200
     volumes:
-      - /var/lib/elasticsearch/data
+      - /volume1/docker/temporal/elastdata:/usr/share/elasticsearch/data
   postgresql:
     container_name: temporal-postgresql
     environment:
@@ -28,7 +28,7 @@ services:
     expose:
       - 5433:5432
     volumes:
-      - /var/lib/postgresql/data
+      - /volume1/docker/temporal/pgdata:/var/lib/postgresql/data
   temporal:
     container_name: temporal
     depends_on:
@@ -52,7 +52,7 @@ services:
     ports:
       - 7233:7233
     volumes:
-      - ./dynamicconfig:/etc/temporal/config/dynamicconfig
+      - /volume1/docker/temporal/dynamicconfig:/etc/temporal/config/dynamicconfig
   temporal-admin-tools:
     container_name: temporal-admin-tools
     depends_on:
