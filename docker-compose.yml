@@ -17,6 +17,7 @@ services:
       - 9200
     volumes:
       - /volume1/docker/temporal/elastdata:/usr/share/elasticsearch/data
+
   postgresql:
     container_name: temporal-postgresql
     environment:
@@ -29,6 +30,7 @@ services:
       - 5433:5432
     volumes:
       - /volume1/docker/temporal/pgdata:/var/lib/postgresql/data
+
   temporal:
     container_name: temporal
     depends_on:
@@ -53,6 +55,7 @@ services:
       - 7233:7233
     volumes:
       - /volume1/docker/temporal/dynamicconfig:/etc/temporal/config/dynamicconfig
+
   temporal-admin-tools:
     container_name: temporal-admin-tools
     depends_on:
@@ -65,6 +68,7 @@ services:
       - temporal-network
     stdin_open: true
     tty: true
+
   temporal-ui:
     container_name: temporal-ui
     depends_on:
@@ -77,6 +81,20 @@ services:
       - temporal-network
     ports:
       - 8080:8080
+
+  temporal-jobs-runner:
+    container_name: temporal-jobs-runner
+    image: tryretool/backend:latest
+    depends_on:
+      - temporal
+    environment:
+      - WORKFLOW_TEMPORAL_NAMESPACE=workflows
+      - WORKFLOW_TASK_QUEUE=RunWorkflowOnpremV3
+      - TEMPORAL_ADDRESS=temporal:7233
+    networks:
+      - temporal-network
+    command: ["node", "./services/workflows/jobsRunner.js"]
+
 networks:
   temporal-network:
     driver: bridge
